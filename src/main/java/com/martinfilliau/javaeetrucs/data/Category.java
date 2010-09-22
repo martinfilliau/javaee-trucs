@@ -10,6 +10,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -19,13 +21,13 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "categories")
 @NamedQueries({
-    @NamedQuery(name=Category.QUERY_GET_TOP_LEVEL_CAT, query="SELECT c FROM Category AS c WHERE c.parent = NULL")
+    @NamedQuery(name=Category.QUERY_GET_TOP_LEVEL_CAT, query="SELECT c FROM Category AS c WHERE c.parent = NULL"),
+    @NamedQuery(name=Category.QUERY_GET_POSTS_FOR_CATEGORIES, query="SELECT DISTINCT p FROM Post p, IN(p.categories) c WHERE c.id IN (:categories) ORDER BY p.publishedAt DESC")
 })
 /**
  * JPA entity representing a category
  */
 public class Category extends BaseEntity implements Serializable {
-
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -41,6 +43,12 @@ public class Category extends BaseEntity implements Serializable {
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "parent_id")
     private List<Category> children;
+
+    @ManyToMany(mappedBy = "categories")
+    @JoinTable(name="post_categories", joinColumns=@JoinColumn(name="post_id"),
+        inverseJoinColumns=@JoinColumn(name="category_id"))
+    private List<Post> posts;
+
 
     /**
      * Add a new category as child of the current category
@@ -65,7 +73,16 @@ public class Category extends BaseEntity implements Serializable {
 
     /* Queries */
 
+    /**
+     * Get all top level categories
+     */
     public static final String QUERY_GET_TOP_LEVEL_CAT = "Category.getTopLevel";
+
+    /**
+     * Get all posts corresponding to categories
+     * Will DISTINCT on posts
+     */
+    public static final String QUERY_GET_POSTS_FOR_CATEGORIES = "Category.getPostsForCategories";
 
 
     /* GETTERs and SETTERs */
@@ -116,6 +133,14 @@ public class Category extends BaseEntity implements Serializable {
      */
     public void setChildren(List<Category> children) {
         this.children = children;
+    }
+
+    public List<Post> getPosts() {
+        return posts;
+    }
+
+    public void setPosts(List<Post> posts) {
+        this.posts = posts;
     }
     
 
