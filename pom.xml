@@ -11,9 +11,24 @@
     <url>http://github.com/martinfilliau/javaee-trucs</url>
 	
     <properties>
-        <hibernate.version>3.5.5-Final</hibernate.version>
+        <hibernate.version>3.5.6-Final</hibernate.version>
         <jfrog.annomojo.version>1.3.1</jfrog.annomojo.version>
+        <netbeans.hint.deploy.server>gfv3ee6</netbeans.hint.deploy.server>
+        <netbeans.hint.j2eeVersion>1.6</netbeans.hint.j2eeVersion>
     </properties>
+
+    <repositories>
+        <repository>
+            <url>https://repository.jboss.org/nexus/content/groups/public/</url>
+            <name>JBoss repository</name>
+            <id>jboss-repository</id>
+        </repository>
+        <repository>
+            <url>http://download.java.net/maven/2/</url>
+            <name>Java.net</name>
+            <id>java-net</id>
+        </repository>
+    </repositories>
 
     <dependencies>
         <dependency>
@@ -45,7 +60,12 @@
             <artifactId>hibernate-jpamodelgen</artifactId>
             <version>1.0.0.Final</version>
         </dependency>
-
+        <dependency>
+            <groupId>javax</groupId>
+            <artifactId>javaee-api</artifactId>
+            <version>6.0</version>
+            <scope>provided</scope>
+        </dependency>
    </dependencies>
     <build>
         <plugins>
