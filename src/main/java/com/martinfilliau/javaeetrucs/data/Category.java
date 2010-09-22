@@ -11,11 +11,16 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
 @Table(name = "categories")
+@NamedQueries({
+    @NamedQuery(name=Category.QUERY_GET_TOP_LEVEL_CAT, query="SELECT c FROM Category AS c WHERE c.parent = NULL")
+})
 /**
  * JPA entity representing a category
  */
@@ -37,6 +42,31 @@ public class Category extends BaseEntity implements Serializable {
     @JoinColumn(name = "parent_id")
     private List<Category> children;
 
+    /**
+     * Add a new category as child of the current category
+     * @param c category to add as a child
+     */
+    public void addCategoryChild(Category c) {
+        this.getChildren().add(c);
+        c.setParent(this);
+    }
+
+    /**
+     * Check if this category is root (has no parent)
+     * @return true if it is root (no parent) else false
+     */
+    public boolean isRoot() {
+        if(this.parent == null) {
+            return true;
+        }
+        return false;
+    }
+
+
+    /* Queries */
+
+    public static final String QUERY_GET_TOP_LEVEL_CAT = "Category.getTopLevel";
+
 
     /* GETTERs and SETTERs */
 
@@ -56,20 +86,63 @@ public class Category extends BaseEntity implements Serializable {
         this.name = name;
     }
 
+    /**
+     * Get parent category
+     * @return the parent or null if it has no parent
+     */
     public Category getParent() {
         return parent;
     }
 
+    /**
+     * Set parent category
+     * @param parent the parent to set
+     */
     public void setParent(Category parent) {
         this.parent = parent;
     }
 
+    /**
+     * Get children of the current category
+     * @return children
+     */
     public List<Category> getChildren() {
         return children;
     }
 
+    /**
+     * Set children of the current category
+     * @param children the children to set
+     */
     public void setChildren(List<Category> children) {
         this.children = children;
     }
     
+
+    /* Overriden methods */
+
+    @Override
+    public final int hashCode() {
+        int hash = 0;
+        hash += (id != null ? id.hashCode() : 0);
+        return hash;
+    }
+
+    @Override
+    public final boolean equals(Object object) {
+        // TODO: Warning - this method won't work in the case the id fields are not set
+        if (!(object instanceof Category)) {
+            return false;
+        }
+        Category other = (Category) object;
+        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public final String toString() {
+        return "data.Category[id=" + id + "]";
+    }
 }
