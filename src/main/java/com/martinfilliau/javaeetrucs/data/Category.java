@@ -44,7 +44,7 @@ public class Category extends BaseEntity implements Serializable {
     @JoinColumn(name = "parent_id")
     private List<Category> children;
 
-    @ManyToMany(mappedBy = "categories")
+    @ManyToMany
     @JoinTable(name="post_categories", joinColumns=@JoinColumn(name="post_id"),
         inverseJoinColumns=@JoinColumn(name="category_id"))
     private List<Post> posts;

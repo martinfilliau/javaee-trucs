@@ -9,6 +9,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
+import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -27,6 +28,7 @@ public class Post extends BaseEntity implements Serializable {
 
     private String name;
 
+    @Lob
     private String description;
 
     @Temporal(value = javax.persistence.TemporalType.DATE)
